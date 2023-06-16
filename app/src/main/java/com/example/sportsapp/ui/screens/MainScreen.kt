@@ -1,12 +1,10 @@
 package com.example.sportsapp.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
@@ -20,34 +18,50 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.sportsapp.R
 import com.example.sportsapp.domain.network.model.Result
+import com.example.sportsapp.utils.Screen
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun MainScreen(
     navController: NavController,
     list: State<List<Result>?>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isLoading: State<Boolean>,
+    onRefresh: () -> Unit
 ) {
-
-    LazyColumn {
-        itemsIndexed(
-            list.value!!
-        ) { _, item ->
-            ColumnItem(item)
+    val swiperRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading.value)
+    SwipeRefresh(
+        state = swiperRefreshState,
+        onRefresh = onRefresh
+    ) {
+        LazyColumn {
+            itemsIndexed(
+                list.value!!
+            ) { _, item ->
+                ColumnItem(
+                    item = item,
+                    navController = navController
+                )
+            }
         }
     }
-
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ColumnItem(
     item: Result,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     Card(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .padding(3.dp),
+            .padding(3.dp)
+            .clickable {
+                navController.navigate("${Screen.WebScreen.route}/123")
+            },
         elevation = 5.dp
     ) {
         Row(
@@ -67,7 +81,7 @@ fun ColumnItem(
                     contentScale = ContentScale.Fit,
                     contentDescription = stringResource(R.string.home_team_logo)
 
-                ){
+                ) {
                     it
                         .error(item.country_logo)
                         .load(item.home_team_logo)
@@ -81,33 +95,14 @@ fun ColumnItem(
             }
 
             Column(
-                verticalArrangement = Arrangement.SpaceBetween,
+                modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = modifier
-                        .height(IntrinsicSize.Max),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = item.league_name,
-                        style = MaterialTheme.typography.h2,
-                        modifier = modifier
-                            .padding(horizontal = 5.dp)
-                    )
-//                        GlideImage(
-//                            model = item.league_logo,
-//                            modifier = modifier
-//                                .size(15.dp, 15.dp),
-//                            contentScale = ContentScale.FillWidth,
-//                            contentDescription = stringResource(R.string.league_logo)
-//                        ){
-//                            it
-//                                .error(item.country_logo)
-//                                .load(item.league_logo)
-//                        }
-                }
+                Text(
+                    text = item.league_name,
+                    style = MaterialTheme.typography.h2
+                )
                 Text(
                     text = item.event_final_result,
                     style = MaterialTheme.typography.h1

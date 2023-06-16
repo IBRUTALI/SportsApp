@@ -71,6 +71,7 @@ dependencies {
 
     //Glide
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.27.0"
 
     //Splash-API
     implementation 'androidx.core:core-splashscreen:1.0.1'
@@ -90,4 +91,8 @@ dependencies {
     //OkHttp3
     implementation 'com.squareup.okhttp3:logging-interceptor:4.10.0'
     implementation "com.squareup.okhttp3:okhttp:4.10.0"
+
+    //OneSignal
+    implementation 'com.onesignal:OneSignal:4.8.5'
+
 }

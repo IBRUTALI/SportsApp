@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
@@ -15,7 +14,6 @@ import com.example.sportsapp.ui.Navigation
 import com.example.sportsapp.ui.theme.SportsAppTheme
 
 class MainActivity : ComponentActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +29,8 @@ class MainActivity : ComponentActivity() {
             SportsAppTheme {
                 Navigation(
                     list = list,
-                    isLoading = isLoading
+                    isLoading = isLoading,
+                    onRefresh = { mainViewModel.insertInDBFromNetwork() }
                 )
             }
         }

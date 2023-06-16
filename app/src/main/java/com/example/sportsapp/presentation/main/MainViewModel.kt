@@ -1,7 +1,6 @@
 package com.example.sportsapp.presentation.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,8 +11,6 @@ import com.example.sportsapp.domain.room.model.ResultEntity
 import com.example.sportsapp.domain.room.repository.LiveScoreRepository
 import com.example.sportsapp.utils.mapToResult
 import com.example.sportsapp.utils.mapToResultEntity
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -41,11 +38,8 @@ class MainViewModel(application: Application): ViewModel() {
         viewModelScope.launch {
             getAll()
             resultList.value = allData
-            if (allData == null) {
-               getLiveScoreList()
-                resultList.value?.let { results ->
-                    insertAllItems(results.mapToResultEntity())
-                }
+            if (allData.isNullOrEmpty()) {
+                insertInDBFromNetwork()
                 _isLoading.value = false
             } else _isLoading.value = false
         }
@@ -53,6 +47,15 @@ class MainViewModel(application: Application): ViewModel() {
 
     fun insertItem(item: ResultEntity) {
         roomRepository.insertItem(item)
+    }
+
+    fun insertInDBFromNetwork() {
+        viewModelScope.launch {
+            getLiveScoreList()
+            resultList.value?.let { results ->
+                insertAllItems(results.mapToResultEntity())
+            }
+        }
     }
 
     private fun insertAllItems(item: List<ResultEntity>) {
@@ -63,9 +66,13 @@ class MainViewModel(application: Application): ViewModel() {
         roomRepository.deleteItem(item)
     }
 
-    private suspend fun getLiveScoreList() =
-        withContext(viewModelScope.coroutineContext) {
-            resultList.value = networkRepository.getLiveScore().body()?.result!!
-        }
+   private fun getLiveScoreList() {
+       viewModelScope.launch {
+           withContext(viewModelScope.coroutineContext) {
+               resultList.value = networkRepository.getLiveScore().body()?.result!!
+           }
+       }
+    }
+
 
 }
