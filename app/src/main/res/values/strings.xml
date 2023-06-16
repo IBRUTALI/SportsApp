@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SportsApp</string>
+    <string name="hello">Добро пожаловать!</string>
+    <string name="soccer_ball">soccer_ball</string>
+    <string name="home_team_logo">home_team_logo</string>
+    <string name="league_logo">league_logo</string>
+    <string name="away_team_logo">away_team_logo</string>
+</resources>
