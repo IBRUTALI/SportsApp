@@ -88,7 +88,7 @@ fun ColumnItem(
                     modifier = modifier
                         .height(IntrinsicSize.Max),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = item.league_name,
@@ -96,17 +96,17 @@ fun ColumnItem(
                         modifier = modifier
                             .padding(horizontal = 5.dp)
                     )
-                        GlideImage(
-                            model = item.league_logo,
-                            modifier = modifier
-                                .size(15.dp, 15.dp),
-                            contentScale = ContentScale.FillWidth,
-                            contentDescription = stringResource(R.string.league_logo)
-                        ){
-                            it
-                                .error(item.country_logo)
-                                .load(item.league_logo)
-                        }
+//                        GlideImage(
+//                            model = item.league_logo,
+//                            modifier = modifier
+//                                .size(15.dp, 15.dp),
+//                            contentScale = ContentScale.FillWidth,
+//                            contentDescription = stringResource(R.string.league_logo)
+//                        ){
+//                            it
+//                                .error(item.country_logo)
+//                                .load(item.league_logo)
+//                        }
                 }
                 Text(
                     text = item.event_final_result,

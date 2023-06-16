@@ -1,5 +1,6 @@
 package com.example.sportsapp.domain.network.model
 
+
 data class Result(
     val away_team_key: Int,
     val away_team_logo: String,
@@ -32,7 +33,7 @@ data class Result(
     val league_name: String,
     val league_round: String,
     val league_season: String,
-    val lineups: Lineups,
+    val lineups: Lineups? = null,
     val stage_name: String,
     val statistics: List<Statistic>,
     val substitutes: List<Substitute>
