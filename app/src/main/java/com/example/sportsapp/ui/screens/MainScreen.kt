@@ -1,16 +1,18 @@
 package com.example.sportsapp.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -30,22 +32,39 @@ fun MainScreen(
     isLoading: State<Boolean>,
     onRefresh: () -> Unit
 ) {
-    val swiperRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading.value)
-    SwipeRefresh(
-        state = swiperRefreshState,
-        onRefresh = onRefresh
-    ) {
-        LazyColumn {
-            itemsIndexed(
-                list.value!!
-            ) { _, item ->
-                ColumnItem(
-                    item = item,
-                    navController = navController
-                )
-            }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        style = MaterialTheme.typography.h2
+                    )
+                },
+                actions = {WebViewAction(navController)}
+            )
+        }, content = {
+            modifier.padding(paddingValues = it)
+                val swiperRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading.value)
+                SwipeRefresh(
+                    state = swiperRefreshState,
+                    onRefresh = onRefresh
+                ) {
+                    LazyColumn{
+                        itemsIndexed(
+                            list.value!!
+                        ) { _, item ->
+                            ColumnItem(
+                                item = item,
+                                navController = navController
+                            )
+                        }
+                    }
+                }
+
         }
-    }
+    )
+
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -58,10 +77,7 @@ fun ColumnItem(
     Card(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .padding(3.dp)
-            .clickable {
-                navController.navigate("${Screen.WebScreen.route}/123")
-            },
+            .padding(3.dp),
         elevation = 5.dp
     ) {
         Row(
@@ -133,5 +149,21 @@ fun ColumnItem(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun WebViewAction(
+    navController: NavController
+) {
+    val context = LocalContext.current
+    IconButton(onClick = {
+        navController.navigate("${Screen.WebScreen.route}/123")
+    }) {
+        Icon(
+            imageVector = Icons.Filled.Send,
+            tint = Color.White,
+            contentDescription = "web_view"
+        )
     }
 }

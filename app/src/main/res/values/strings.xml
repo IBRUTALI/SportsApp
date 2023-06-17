@@ -5,4 +5,5 @@
     <string name="home_team_logo">home_team_logo</string>
     <string name="league_logo">league_logo</string>
     <string name="away_team_logo">away_team_logo</string>
+    <string name="open">OPEN</string>
 </resources>
