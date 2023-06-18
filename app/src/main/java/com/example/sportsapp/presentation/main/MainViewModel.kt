@@ -11,10 +11,11 @@ import com.example.sportsapp.domain.room.model.ResultEntity
 import com.example.sportsapp.domain.room.repository.LiveScoreRepository
 import com.example.sportsapp.utils.mapToResult
 import com.example.sportsapp.utils.mapToResultEntity
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainViewModel(application: Application): ViewModel() {
     private val _isLoading = MutableStateFlow(true)
@@ -30,18 +31,19 @@ class MainViewModel(application: Application): ViewModel() {
         roomRepository = LiveScoreRepository(liveScoreDao)
     }
 
-    private suspend fun getAll() =
-        withContext(viewModelScope.coroutineContext) {
-            allData = roomRepository.getAllItem().mapToResult()
-    }
+    private suspend fun getAll(): Deferred<List<Result>> =
+        viewModelScope.async {
+            roomRepository.getAllItem().mapToResult()
+        }
+
+
     fun getAllCache() {
         viewModelScope.launch {
-            getAll()
-            resultList.value = allData
+            allData = getAll().await()
             if (allData.isNullOrEmpty()) {
                 insertInDBFromNetwork()
-                _isLoading.value = false
-            } else _isLoading.value = false
+            } else resultList.value = allData
+            _isLoading.value = false
         }
     }
 
@@ -51,10 +53,11 @@ class MainViewModel(application: Application): ViewModel() {
 
     fun insertInDBFromNetwork() {
         viewModelScope.launch {
-            getLiveScoreList()
+            resultList.value = getLiveScoreList().await()
             resultList.value?.let { results ->
                 insertAllItems(results.mapToResultEntity())
             }
+            resultList.value = getAll().await()
         }
     }
 
@@ -66,13 +69,10 @@ class MainViewModel(application: Application): ViewModel() {
         roomRepository.deleteItem(item)
     }
 
-   private fun getLiveScoreList() {
-       viewModelScope.launch {
-           withContext(viewModelScope.coroutineContext) {
-               resultList.value = networkRepository.getLiveScore().body()?.result!!
+   private suspend fun getLiveScoreList():Deferred<List<Result>>  =
+       viewModelScope.async {
+               networkRepository.getLiveScore().body()?.result!!
            }
-       }
-    }
 
 
 }

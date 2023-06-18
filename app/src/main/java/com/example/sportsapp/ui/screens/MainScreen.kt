@@ -32,39 +32,22 @@ fun MainScreen(
     isLoading: State<Boolean>,
     onRefresh: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        style = MaterialTheme.typography.h2
-                    )
-                },
-                actions = {WebViewAction(navController)}
-            )
-        }, content = {
-            modifier.padding(paddingValues = it)
-                val swiperRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading.value)
-                SwipeRefresh(
-                    state = swiperRefreshState,
-                    onRefresh = onRefresh
-                ) {
-                    LazyColumn{
-                        itemsIndexed(
-                            list.value!!
-                        ) { _, item ->
-                            ColumnItem(
-                                item = item,
-                                navController = navController
-                            )
-                        }
-                    }
-                }
-
+    val swiperRefreshState = rememberSwipeRefreshState(isRefreshing = isLoading.value)
+    SwipeRefresh(
+        state = swiperRefreshState,
+        onRefresh = onRefresh
+    ) {
+        LazyColumn {
+            itemsIndexed(
+                list.value!!
+            ) { _, item ->
+                ColumnItem(
+                    item = item,
+                    navController = navController
+                )
+            }
         }
-    )
-
+    }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
