@@ -68,6 +68,7 @@ dependencies {
     //LiveData && ViewModel
     implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1"
 
     //Glide & Accompanist
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
